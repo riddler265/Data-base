@@ -12,45 +12,45 @@ CREATE TYPE major AS ENUM ('captain', 'engineer', 'cook', 'cleaner');
 --таблицы
 CREATE TABLE ship (
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name VARCHAR(20) DEFAULT 'Неизвестный',
     description TEXT
 );
 
 CREATE TABLE human (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
+    name VARCHAR(20) NOT NULL,
     age INTEGER NOT NULL CHECK (age > 0),
     major major,
     sex sex NOT NULL DEFAULT 'man',
-    ship_id INTEGER REFERENCES ship(id)
+    ship_id INTEGER REFERENCES ship(id) ON DELETE SET NULL
 );
 
 CREATE TABLE location (
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name VARCHAR(20),
     description TEXT
 );
 
 CREATE TABLE action (
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name VARCHAR(20),
     description TEXT,
-    ship_id INTEGER NOT NULL REFERENCES ship(id),
-    location_id INTEGER NOT NULL REFERENCES location(id),
+    ship_id INTEGER NOT NULL REFERENCES ship(id) ON DELETE RESTRICT,
+    location_id INTEGER NOT NULL REFERENCES location(id) ON DELETE RESTRICT,
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     result BOOLEAN
 );
 
 CREATE TABLE entity (
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name VARCHAR(20),
     description TEXT
 );
 
 CREATE TABLE entities_action (
-    id SERIAL PRIMARY KEY,
-    entity_id INTEGER NOT NULL REFERENCES entity(id),
-    action_id INTEGER NOT NULL REFERENCES action(id)
+    entity_id INTEGER NOT NULL REFERENCES entity(id) ON DELETE CASCADE,
+    action_id INTEGER NOT NULL REFERENCES action(id) ON DELETE CASCADE,
+    PRIMARY KEY (entity_id, action_id)
 );
 
 --ЗАПОЛНЕНИЕ
